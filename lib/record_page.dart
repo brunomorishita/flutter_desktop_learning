@@ -16,7 +16,7 @@ String _getPath() {
   var path = p.join(openalSoftWrapperPath, 'build\\windows\\native_lib');
 
   String mode = kDebugMode ? 'Debug' : 'Release';
-  path = p.join(path, mode, 'openal-soft-wrapper.dll');
+  path = p.join(path, mode, 'sdl-wrapper.dll');
 
   print('path: $path');
   return path;
