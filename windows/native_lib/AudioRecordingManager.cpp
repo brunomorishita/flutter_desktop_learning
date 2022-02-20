@@ -41,6 +41,8 @@ void AudioRecordingManager::init(char* wavFile) {
         return;
     }
 
+    createWavFile(wavFile);
+
     SDL_AudioDeviceID playbackDeviceId = 0;
 
     SDL_zero(m_desiredSpec);
@@ -100,4 +102,15 @@ void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
 
 	//Move along buffer
 	m_bufferWritePosition += len;
+}
+
+void AudioRecordingManager::createWavFile(const std::string& fileName) {
+    m_wavFile.open(fileName, std::ios::out | std::ios::binary);
+
+    wav_hdr wav;
+
+    // for now
+    wav.ChunkSize = 0;
+    wav.Subchunk2Size = 0;
+    m_wavFile.write(reinterpret_cast<const char *>(&wav), sizeof(wav));
 }

@@ -5,7 +5,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:styled_widget/styled_widget.dart';
-import 'package:audio_recorder_nullsafety/audio_recorder_nullsafety.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'native_audio_recording.dart' as nar;
@@ -61,8 +60,6 @@ class RecordPage extends StatelessWidget {
           case RecordingState.Idle:
             {
               print("Start --> Path : ${audioFilePath}");
-              await AudioRecorder.start(
-                  path: audioFilePath, audioOutputFormat: AudioOutputFormat.WAV);
               recordingState = RecordingState.Start;
               Pointer<Int8> audioFilePathC = audioFilePath.toNativeUtf8().cast();
               nativeAudioRecording.init(audioFilePathC);
@@ -70,9 +67,7 @@ class RecordPage extends StatelessWidget {
             }
           case RecordingState.Start:
             {
-              Recording recording = await AudioRecorder.stop();
-              print("Stop --> Path : ${recording.path},  Format : ${recording.audioOutputFormat},"
-                  "Duration : ${recording.duration},  Extension : ${recording.extension},");
+              print("Stop --");
               recordingState = RecordingState.Idle;
               break;
             }

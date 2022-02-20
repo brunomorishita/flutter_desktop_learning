@@ -5,11 +5,13 @@
 extern "C" {
 #endif
 
-void init(char* wavFile);
+#define NATIVE_SDL_PUBLIC(type) __declspec(dllexport) type __stdcall
 
-void start();
+NATIVE_SDL_PUBLIC(void) init(char* wavFile);
 
-void stop();
+NATIVE_SDL_PUBLIC(void) start();
+
+NATIVE_SDL_PUBLIC(void) stop();
 
 #ifdef __cplusplus
 }

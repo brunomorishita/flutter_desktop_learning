@@ -5,6 +5,8 @@
 
 #include <memory>
 #include <cstdint>
+#include <string>
+#include <fstream>
 
 class AudioRecordingManager {
 public:
@@ -22,7 +24,11 @@ public:
   void processReceivedSpec(Uint8* stream, int len );
 
 private:
+  void createWavFile(const std::string& fileName);
+
   AudioConfig m_audioConfig;
+
+  std::ofstream m_wavFile;
 
   //Recieved audio spec
   SDL_AudioSpec m_receivedSpec;
