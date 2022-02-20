@@ -2,6 +2,7 @@
 #include "AudioRecordingManager.h"
 
 #include <iostream>
+#include <memory>
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
 #define IS_WIN32
@@ -11,11 +12,19 @@
 #include <windows.h>
 #endif
 
-static AudioRecordingManager audioRecordingManager;
+static std::unique_ptr<AudioRecordingManager> audioRecordingManager = nullptr;
 
 // Avoiding name mangling
 extern "C" {
-void init() {
-    audioRecordingManager.init();
+void init(char* wavFile) {
+    AudioRecordingManager::AudioConfig audioConfig;
+    audioRecordingManager = std::make_unique<AudioRecordingManager>(audioConfig);
+
+    audioRecordingManager->init(wavFile);
 }
+
+void start() {}
+
+void stop() {}
+
 }  // extern "C"

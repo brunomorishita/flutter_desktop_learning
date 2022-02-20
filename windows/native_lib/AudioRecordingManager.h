@@ -4,15 +4,25 @@
 #include "SDL.h"
 
 #include <memory>
+#include <cstdint>
 
 class AudioRecordingManager {
 public:
-  void init();
+  struct AudioConfig {
+      uint8_t channels = 2;
+      int frequency = 44100;
+      uint16_t samples = 4096;
+  };
+
+  AudioRecordingManager(AudioConfig audioConfig);
+
+  void init(char* wavFile);
   void start();
   void stop();
-
   void processReceivedSpec(Uint8* stream, int len );
+
 private:
+  AudioConfig m_audioConfig;
 
   //Recieved audio spec
   SDL_AudioSpec m_receivedSpec;

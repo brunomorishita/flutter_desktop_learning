@@ -5,7 +5,11 @@
 extern "C" {
 #endif
 
-void init();
+void init(char* wavFile);
+
+void start();
+
+void stop();
 
 #ifdef __cplusplus
 }
