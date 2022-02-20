@@ -31,12 +31,12 @@ dev_dependencies:
   ffigen: 4.1.3
 
 ffigen:
-  output: 'lib/native_openal_soft_bindings.dart'
-  name: 'OpenAlSoft'
-  description: 'wrapper for openal-soft'
+  output: 'lib/native_audio_recording.dart'
+  name: 'NativeAudioRecording'
+  description: 'Native Audio Recording using SDL'
   headers:
     entry-points:
-      - 'windows/native_lib/native_openal_soft.h'
+      - 'windows/native_lib/native_sdl.h'
 
 flutter:
   uses-material-design: true

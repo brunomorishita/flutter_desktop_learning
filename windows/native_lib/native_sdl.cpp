@@ -1,5 +1,5 @@
 #include "native_sdl.h"
-#include "SDL.h"
+#include "AudioRecordingManager.h"
 
 #include <iostream>
 
@@ -11,15 +11,11 @@
 #include <windows.h>
 #endif
 
+static AudioRecordingManager audioRecordingManager;
+
 // Avoiding name mangling
 extern "C" {
 void init() {
-    if (SDL_Init(SDL_INIT_AUDIO) != 0){
-        std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
-        return;
-    }
-    SDL_Quit();
-
-    std::cout << "Calling init yay!" << std::endl;
+    audioRecordingManager.init();
 }
-}
+}  // extern "C"
