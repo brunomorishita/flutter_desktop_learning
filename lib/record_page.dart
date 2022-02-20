@@ -63,12 +63,14 @@ class RecordPage extends StatelessWidget {
               recordingState = RecordingState.Start;
               Pointer<Int8> audioFilePathC = audioFilePath.toNativeUtf8().cast();
               nativeAudioRecording.init(audioFilePathC);
+              nativeAudioRecording.start();
               break;
             }
           case RecordingState.Start:
             {
               print("Stop --");
               recordingState = RecordingState.Idle;
+              nativeAudioRecording.stop();
               break;
             }
         }

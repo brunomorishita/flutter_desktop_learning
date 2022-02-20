@@ -33,6 +33,11 @@ AudioRecordingManager::AudioRecordingManager(AudioConfig audioConfig) {
   m_audioConfig = audioConfig;
 }
 
+AudioRecordingManager::~AudioRecordingManager() {
+    if(t0.joinable())
+        t0.join();
+}
+
 void AudioRecordingManager::init(char* wavFile) {
     using namespace std::placeholders;
 
@@ -88,12 +93,25 @@ void AudioRecordingManager::init(char* wavFile) {
     //Allocate and initialize byte buffer
     m_buffer = std::make_unique<Uint8[]>(m_bufferByteSize);
     std::memset(m_buffer.get(), 0, m_bufferByteSize);
+
+    t0 = std::thread([&]() { consumeAudio(); });
 }
 
 void AudioRecordingManager::start() {
+    SDL_PauseAudioDevice( m_deviceId, SDL_FALSE );
 }
 
 void AudioRecordingManager::stop() {
+	SDL_LockAudioDevice( m_deviceId );
+	SDL_PauseAudioDevice( m_deviceId, SDL_TRUE );
+	SDL_CloseAudioDevice( m_deviceId );
+	SDL_UnlockAudioDevice( m_deviceId );
+
+	SDL_Quit();
+
+	m_finished = true;
+	if(t0.joinable())
+	    t0.join();
 }
 
 void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
@@ -102,6 +120,8 @@ void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
 
 	//Move along buffer
 	m_bufferWritePosition += len;
+
+	m_cv.notify_one();
 }
 
 void AudioRecordingManager::createWavFile(const std::string& fileName) {
@@ -113,4 +133,22 @@ void AudioRecordingManager::createWavFile(const std::string& fileName) {
     wav.ChunkSize = 0;
     wav.Subchunk2Size = 0;
     m_wavFile.write(reinterpret_cast<const char *>(&wav), sizeof(wav));
+}
+
+void AudioRecordingManager::consumeAudio() {
+    do {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        while (m_bufferWritePosition == m_bufferReadPosition)
+        {
+                m_cv.wait(lock, [&](){ return m_bufferWritePosition > m_bufferReadPosition; }); // predicate an while loop - protection from spurious wakeups
+        }
+
+        int len =  m_bufferWritePosition - m_bufferReadPosition;
+
+        m_wavFile.write(reinterpret_cast<const char *>(&m_buffer[ m_bufferWritePosition ]), sizeof(Uint8) * len);
+
+        //Move along buffer
+        m_bufferReadPosition += len;
+
+    } while(!m_finished);
 }

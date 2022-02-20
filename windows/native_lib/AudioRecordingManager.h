@@ -3,6 +3,8 @@
 
 #include "SDL.h"
 
+#include <thread>
+#include <mutex>
 #include <memory>
 #include <cstdint>
 #include <string>
@@ -18,6 +20,8 @@ public:
 
   AudioRecordingManager(AudioConfig audioConfig);
 
+  ~AudioRecordingManager();
+
   void init(char* wavFile);
   void start();
   void stop();
@@ -25,6 +29,8 @@ public:
 
 private:
   void createWavFile(const std::string& fileName);
+
+  void consumeAudio();
 
   AudioConfig m_audioConfig;
 
@@ -52,6 +58,14 @@ private:
   SDL_AudioDeviceID m_deviceId = 0;
 
   int m_bufferSeconds = 10;
+
+  std::mutex m_mutex;
+
+  std::atomic_bool m_finished{false};
+
+  std::condition_variable m_cv;
+
+  std::thread t0;
 };
 
 #endif //FLUTTER_DESKTOP_LEARNING_AUDIORECORDINGMANAGER_H

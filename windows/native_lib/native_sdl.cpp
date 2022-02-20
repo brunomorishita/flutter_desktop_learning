@@ -23,8 +23,12 @@ void init(char* wavFile) {
     audioRecordingManager->init(wavFile);
 }
 
-void start() {}
+void start() {
+    audioRecordingManager->start();
+}
 
-void stop() {}
+void stop() {
+    audioRecordingManager->stop();
+}
 
 }  // extern "C"
