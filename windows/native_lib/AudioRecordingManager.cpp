@@ -175,8 +175,8 @@ void AudioRecordingManager::consumeAudio() {
 
         int len =  m_bufferWritePosition - m_bufferReadPosition;
 
-        std::cout << "==> writing " << len << " bytes into wav file" << std::endl;
-        char *buffer_raw = (char *) &m_buffer[ m_bufferWritePosition ];
+        std::cout << "==> writing " << sizeof(Uint8) * len << " bytes into wav file" << std::endl;
+        char *buffer_raw = (char *) &m_buffer[ m_bufferReadPosition ];
         m_wavFile.write(buffer_raw, sizeof(Uint8) * len);
 
         //Move along buffer
