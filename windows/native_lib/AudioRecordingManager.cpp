@@ -143,6 +143,11 @@ void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
     //Copy audio from stream
 	std::memcpy(&m_buffer[ m_bufferWritePosition ], stream, len);
 
+	for (int i = 0; i < 20; ++i)
+	    std::cout << (int)m_buffer[ m_bufferWritePosition + i ] << ", ";
+
+	std::cout << std::endl;
+
 	//Move along buffer
 	m_bufferWritePosition += len;
 
@@ -172,7 +177,7 @@ void AudioRecordingManager::consumeAudio() {
 
         std::cout << "==> writing " << len << " bytes into wav file" << std::endl;
         char *buffer_raw = (char *) &m_buffer[ m_bufferWritePosition ];
-        m_wavFile.write(buffer, sizeof(Uint8) * len);
+        m_wavFile.write(buffer_raw, sizeof(Uint8) * len);
 
         //Move along buffer
         m_bufferReadPosition += len;
