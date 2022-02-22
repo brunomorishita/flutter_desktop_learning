@@ -42,7 +42,7 @@ private:
   SDL_AudioSpec m_desiredSpec;
 
   //Recording data buffer
-  std::unique_ptr<Uint8[]> m_buffer = nullptr;
+  Uint8* m_buffer = nullptr;
 
   //Size of data buffer
   Uint32 m_bufferByteSize = 0;

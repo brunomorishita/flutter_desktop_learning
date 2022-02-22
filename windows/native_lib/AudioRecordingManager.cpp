@@ -55,6 +55,7 @@ AudioRecordingManager::AudioRecordingManager(AudioConfig audioConfig) {
 }
 
 AudioRecordingManager::~AudioRecordingManager() {
+    delete[] m_buffer;
     if(t0.joinable())
         t0.join();
 }
@@ -112,8 +113,8 @@ void AudioRecordingManager::init(const char* wavFile) {
     m_bufferByteSize = m_bufferSeconds * bytesPerSecond;
 
     //Allocate and initialize byte buffer
-    m_buffer = std::make_unique<Uint8[]>(m_bufferByteSize);
-    std::memset(m_buffer.get(), 0, m_bufferByteSize);
+    m_buffer = new Uint8[m_bufferByteSize];
+    std::memset(m_buffer, 0, m_bufferByteSize);
 
     t0 = std::thread([&]() { consumeAudio(); });
 }
@@ -170,7 +171,8 @@ void AudioRecordingManager::consumeAudio() {
         int len =  m_bufferWritePosition - m_bufferReadPosition;
 
         std::cout << "==> writing " << len << " bytes into wav file" << std::endl;
-        m_wavFile.write(reinterpret_cast<const char *>(&m_buffer[ m_bufferWritePosition ]), sizeof(Uint8) * len);
+        char *buffer_raw = (char *) &m_buffer[ m_bufferWritePosition ];
+        m_wavFile.write(buffer, sizeof(Uint8) * len);
 
         //Move along buffer
         m_bufferReadPosition += len;
