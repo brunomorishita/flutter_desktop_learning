@@ -3,6 +3,27 @@
 #include <iostream>
 #include <functional>
 
+#define IS_WIN32 defined(WIN32) || defined(_WIN32) || defined(__WIN32)
+
+#ifdef IS_WIN32
+#include <windows.h>
+#endif
+
+void platform_log(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+#if defined(IS_WIN32)
+    char *buf = new char[4096];
+    std::fill_n(buf, 4096, '\0');
+    _vsprintf_p(buf, 4096, fmt, args);
+    OutputDebugStringA(buf);
+    delete[] buf;
+#else
+    vprintf(fmt, args);
+#endif
+    va_end(args);
+}
+
 typedef struct WAV_HEADER {
   /* RIFF Chunk Descriptor */
   uint8_t RIFF[4] = {'R', 'I', 'F', 'F'}; // RIFF Header Magic header
@@ -39,7 +60,7 @@ AudioRecordingManager::~AudioRecordingManager() {
 }
 
 void AudioRecordingManager::init(char* wavFile) {
-    using namespace std::placeholders;
+    platform_log("==> AudioRecordingManager::init");
 
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
@@ -115,6 +136,8 @@ void AudioRecordingManager::stop() {
 }
 
 void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
+    platform_log("==> AudioRecordingManager::processReceivedSpec");
+
     //Copy audio from stream
 	std::memcpy(&m_buffer[ m_bufferWritePosition ], stream, len);
 
@@ -140,7 +163,7 @@ void AudioRecordingManager::consumeAudio() {
         std::unique_lock<std::mutex> lock(m_mutex);
         while (m_bufferWritePosition == m_bufferReadPosition)
         {
-                m_cv.wait(lock, [&](){ return m_bufferWritePosition > m_bufferReadPosition; }); // predicate an while loop - protection from spurious wakeups
+                m_cv.wait(lock, [&](){ return m_bufferWritePosition > m_bufferReadPosition; });
         }
 
         int len =  m_bufferWritePosition - m_bufferReadPosition;
@@ -151,4 +174,10 @@ void AudioRecordingManager::consumeAudio() {
         m_bufferReadPosition += len;
 
     } while(!m_finished);
+
+    m_wavFile.close();
+
+    wav_hdr wav;
+    wav.ChunkSize = m_bufferWritePosition + sizeof(wav_hdr) - 8;
+    wav.Subchunk2Size = m_bufferWritePosition + sizeof(wav_hdr) - 44;
 }
