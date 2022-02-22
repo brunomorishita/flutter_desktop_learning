@@ -36,3 +36,8 @@ find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIR})
 target_link_libraries(${NATIVE_LIB_NAME} PRIVATE ${SDL2_LIBRARIES})
 message("SDL_LIBRARIES: ${SDL2_LIBRARIES}")
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+add_executable("record" "example/record.cpp"
+                        "AudioRecordingManager.cpp")
+target_link_libraries("record" PRIVATE ${SDL2_LIBRARIES})

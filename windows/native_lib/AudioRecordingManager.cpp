@@ -59,8 +59,8 @@ AudioRecordingManager::~AudioRecordingManager() {
         t0.join();
 }
 
-void AudioRecordingManager::init(char* wavFile) {
-    platform_log("==> AudioRecordingManager::init");
+void AudioRecordingManager::init(const char* wavFile) {
+    std::cout << "==> AudioRecordingManager::init" << std::endl;
 
     if (SDL_Init(SDL_INIT_AUDIO) != 0) {
         std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
@@ -131,12 +131,13 @@ void AudioRecordingManager::stop() {
 	SDL_Quit();
 
 	m_finished = true;
+	m_cv.notify_one();
 	if(t0.joinable())
 	    t0.join();
 }
 
 void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
-    platform_log("==> AudioRecordingManager::processReceivedSpec");
+    std::cout << "==> AudioRecordingManager::processReceivedSpec ==, len = "<< len << std::endl;
 
     //Copy audio from stream
 	std::memcpy(&m_buffer[ m_bufferWritePosition ], stream, len);
@@ -161,19 +162,22 @@ void AudioRecordingManager::createWavFile(const std::string& fileName) {
 void AudioRecordingManager::consumeAudio() {
     do {
         std::unique_lock<std::mutex> lock(m_mutex);
-        while (m_bufferWritePosition == m_bufferReadPosition)
+        while (m_bufferWritePosition == m_bufferReadPosition && !m_finished )
         {
-                m_cv.wait(lock, [&](){ return m_bufferWritePosition > m_bufferReadPosition; });
+                m_cv.wait(lock, [&](){ return (m_bufferWritePosition > m_bufferReadPosition) || m_finished; });
         }
 
         int len =  m_bufferWritePosition - m_bufferReadPosition;
 
+        std::cout << "==> writing " << len << " bytes into wav file" << std::endl;
         m_wavFile.write(reinterpret_cast<const char *>(&m_buffer[ m_bufferWritePosition ]), sizeof(Uint8) * len);
 
         //Move along buffer
         m_bufferReadPosition += len;
 
     } while(!m_finished);
+
+    std::cout << "finished" << std::endl;
 
     m_wavFile.close();
 

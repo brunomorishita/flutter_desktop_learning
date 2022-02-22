@@ -22,7 +22,7 @@ public:
 
   ~AudioRecordingManager();
 
-  void init(char* wavFile);
+  void init(const char* wavFile);
   void start();
   void stop();
   void processReceivedSpec(Uint8* stream, int len );
