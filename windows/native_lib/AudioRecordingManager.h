@@ -15,7 +15,7 @@ public:
   struct AudioConfig {
       uint8_t channels = 2;
       int frequency = 44100;
-      uint16_t samples = 4096;
+      uint16_t samples = 448;
   };
 
   AudioRecordingManager(AudioConfig audioConfig);

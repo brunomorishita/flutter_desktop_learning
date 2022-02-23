@@ -9,21 +9,6 @@
 #include <windows.h>
 #endif
 
-void platform_log(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-#if defined(IS_WIN32)
-    char *buf = new char[4096];
-    std::fill_n(buf, 4096, '\0');
-    _vsprintf_p(buf, 4096, fmt, args);
-    OutputDebugStringA(buf);
-    delete[] buf;
-#else
-    vprintf(fmt, args);
-#endif
-    va_end(args);
-}
-
 typedef struct WAV_HEADER {
   /* RIFF Chunk Descriptor */
   uint8_t RIFF[4] = {'R', 'I', 'F', 'F'}; // RIFF Header Magic header
@@ -31,14 +16,14 @@ typedef struct WAV_HEADER {
   uint8_t WAVE[4] = {'W', 'A', 'V', 'E'}; // WAVE Header
   /* "fmt" sub-chunk */
   uint8_t fmt[4] = {'f', 'm', 't', ' '}; // FMT header
-  uint32_t Subchunk1Size = 16;           // Size of the fmt chunk
+  uint32_t Subchunk1Size = 32;           // Size of the fmt chunk
   uint16_t AudioFormat = 1; // Audio format 1=PCM,6=mulaw,7=alaw,     257=IBM
                             // Mu-Law, 258=IBM A-Law, 259=ADPCM
-  uint16_t NumOfChan = 1;   // Number of channels 1=Mono 2=Sterio
-  uint32_t SamplesPerSec = 16000;   // Sampling Frequency in Hz
-  uint32_t bytesPerSec = 16000 * 2; // bytes per second
+  uint16_t NumOfChan = 2;   // Number of channels 1=Mono 2=Sterio
+  uint32_t SamplesPerSec = 44100;   // Sampling Frequency in Hz
+  uint32_t bytesPerSec = 44100 * 2; // bytes per second
   uint16_t blockAlign = 2;          // 2=16-bit mono, 4=16-bit stereo
-  uint16_t bitsPerSample = 16;      // Number of bits per sample
+  uint16_t bitsPerSample = 32;      // Number of bits per sample
   /* "data" sub-chunk */
   uint8_t Subchunk2ID[4] = {'d', 'a', 't', 'a'}; // "data"  string
   uint32_t Subchunk2Size;                        // Sampled data length
@@ -74,11 +59,13 @@ void AudioRecordingManager::init(const char* wavFile) {
 
     SDL_zero(m_desiredSpec);
     m_desiredSpec.freq = m_audioConfig.frequency;
-    m_desiredSpec.format = AUDIO_S16;
+    m_desiredSpec.format = AUDIO_F32;
     m_desiredSpec.channels = m_audioConfig.channels;
     m_desiredSpec.samples = m_audioConfig.samples;
     m_desiredSpec.userdata = this;
     m_desiredSpec.callback = audioRecordingCallback;
+
+    SDL_zero(m_receivedSpec);
 
     m_deviceCount = SDL_GetNumAudioDevices(SDL_TRUE);
 
@@ -91,9 +78,12 @@ void AudioRecordingManager::init(const char* wavFile) {
     // pick the first audio device
     int audioIndex = 0;
 
+    const char *device = SDL_GetAudioDeviceName(audioIndex, SDL_TRUE);
+    printf( " device is %s\n", device );
+
     //Open recording device
-    m_deviceId = SDL_OpenAudioDevice(SDL_GetAudioDeviceName(audioIndex, SDL_TRUE), SDL_TRUE,
-                                     &m_desiredSpec, &m_receivedSpec, SDL_AUDIO_ALLOW_FORMAT_CHANGE);
+    m_deviceId = SDL_OpenAudioDevice(device, SDL_TRUE,
+                                     &m_desiredSpec, &m_receivedSpec, SDL_AUDIO_ALLOW_ANY_CHANGE);
 
     // Device failed to open
     if(m_deviceId == 0)
@@ -126,10 +116,13 @@ void AudioRecordingManager::start() {
 void AudioRecordingManager::stop() {
 	SDL_LockAudioDevice( m_deviceId );
 	SDL_PauseAudioDevice( m_deviceId, SDL_TRUE );
-	SDL_CloseAudioDevice( m_deviceId );
 	SDL_UnlockAudioDevice( m_deviceId );
 
+	SDL_CloseAudioDevice( m_deviceId );
+
 	SDL_Quit();
+
+    std::cout << "==> AudioRecordingManager::stop == "<< std::endl;
 
 	m_finished = true;
 	m_cv.notify_one();
@@ -162,7 +155,7 @@ void AudioRecordingManager::createWavFile(const std::string& fileName) {
     // for now
     wav.ChunkSize = 0;
     wav.Subchunk2Size = 0;
-    m_wavFile.write(reinterpret_cast<const char *>(&wav), sizeof(wav));
+    //m_wavFile.write(reinterpret_cast<const char *>(&wav), sizeof(wav));
 }
 
 void AudioRecordingManager::consumeAudio() {
@@ -170,7 +163,8 @@ void AudioRecordingManager::consumeAudio() {
         std::unique_lock<std::mutex> lock(m_mutex);
         while (m_bufferWritePosition == m_bufferReadPosition && !m_finished )
         {
-                m_cv.wait(lock, [&](){ return (m_bufferWritePosition > m_bufferReadPosition) || m_finished; });
+            std::cout << "==> waiting " << std::endl;
+            m_cv.wait(lock, [&](){ return (m_bufferWritePosition > m_bufferReadPosition) || m_finished; });
         }
 
         int len =  m_bufferWritePosition - m_bufferReadPosition;

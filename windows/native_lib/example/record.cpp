@@ -12,7 +12,7 @@ int main (int argc, void **argv) {
     AudioRecordingManager::AudioConfig audioConfig;
     audioRecordingManager = std::make_unique<AudioRecordingManager>(audioConfig);
 
-    std::string wavFile = "record.wav";
+    std::string wavFile = "record.raw";
     audioRecordingManager->init(wavFile.c_str());
     audioRecordingManager->start();
     std::this_thread::sleep_for(std::chrono::seconds(5));
