@@ -25,8 +25,9 @@ String _getPath() {
 class RecordPage extends StatelessWidget {
   RecordingState recordingState = RecordingState.Idle;
   late String appDocPath;
-  String audioFileName = "record.wav";
-  late String audioFilePath;
+  String audioFileName = "record";
+  String audioFileExtension = ".raw";
+  int audioIndex = 0;
 
   final nativeAudioRecording = nar.NativeAudioRecording(DynamicLibrary.open(_getPath()));
 
@@ -37,7 +38,6 @@ class RecordPage extends StatelessWidget {
   void initializer() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     appDocPath = appDocDir.path;
-    audioFilePath = appDocPath + "\\" + audioFileName;
   }
 
   // This widget is the root of your application.
@@ -59,6 +59,8 @@ class RecordPage extends StatelessWidget {
         switch (recordingState) {
           case RecordingState.Idle:
             {
+              String audioFilePath = appDocPath + "\\" + audioFileName +
+                  audioIndex.toString() + audioFileExtension;
               print("Start --> Path : ${audioFilePath}");
               recordingState = RecordingState.Start;
               Pointer<Int8> audioFilePathC = audioFilePath.toNativeUtf8().cast();
@@ -71,6 +73,7 @@ class RecordPage extends StatelessWidget {
               print("Stop --");
               recordingState = RecordingState.Idle;
               nativeAudioRecording.stop();
+              ++audioIndex;
               break;
             }
         }
