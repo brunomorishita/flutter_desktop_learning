@@ -9,26 +9,6 @@
 #include <windows.h>
 #endif
 
-typedef struct WAV_HEADER {
-  /* RIFF Chunk Descriptor */
-  uint8_t RIFF[4] = {'R', 'I', 'F', 'F'}; // RIFF Header Magic header
-  uint32_t ChunkSize;                     // RIFF Chunk Size
-  uint8_t WAVE[4] = {'W', 'A', 'V', 'E'}; // WAVE Header
-  /* "fmt" sub-chunk */
-  uint8_t fmt[4] = {'f', 'm', 't', ' '}; // FMT header
-  uint32_t Subchunk1Size = 32;           // Size of the fmt chunk
-  uint16_t AudioFormat = 1; // Audio format 1=PCM,6=mulaw,7=alaw,     257=IBM
-                            // Mu-Law, 258=IBM A-Law, 259=ADPCM
-  uint16_t NumOfChan = 2;   // Number of channels 1=Mono 2=Sterio
-  uint32_t SamplesPerSec = 44100;   // Sampling Frequency in Hz
-  uint32_t bytesPerSec = 44100 * 2; // bytes per second
-  uint16_t blockAlign = 2;          // 2=16-bit mono, 4=16-bit stereo
-  uint16_t bitsPerSample = 32;      // Number of bits per sample
-  /* "data" sub-chunk */
-  uint8_t Subchunk2ID[4] = {'d', 'a', 't', 'a'}; // "data"  string
-  uint32_t Subchunk2Size;                        // Sampled data length
-} wav_hdr;
-
 static void audioRecordingCallback(void* userdata, Uint8* stream, int len )
 {
     AudioRecordingManager* recordManager = (AudioRecordingManager*) userdata;
@@ -136,11 +116,6 @@ void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
     //Copy audio from stream
 	std::memcpy(&m_buffer[ m_bufferWritePosition ], stream, len);
 
-	for (int i = 0; i < 20; ++i)
-	    std::cout << (int)m_buffer[ m_bufferWritePosition + i ] << ", ";
-
-	std::cout << std::endl;
-
 	//Move along buffer
 	m_bufferWritePosition += len;
 
@@ -149,13 +124,6 @@ void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
 
 void AudioRecordingManager::createWavFile(const std::string& fileName) {
     m_wavFile.open(fileName, std::ios::out | std::ios::binary);
-
-    wav_hdr wav;
-
-    // for now
-    wav.ChunkSize = 0;
-    wav.Subchunk2Size = 0;
-    //m_wavFile.write(reinterpret_cast<const char *>(&wav), sizeof(wav));
 }
 
 void AudioRecordingManager::consumeAudio() {
@@ -181,8 +149,4 @@ void AudioRecordingManager::consumeAudio() {
     std::cout << "finished" << std::endl;
 
     m_wavFile.close();
-
-    wav_hdr wav;
-    wav.ChunkSize = m_bufferWritePosition + sizeof(wav_hdr) - 8;
-    wav.Subchunk2Size = m_bufferWritePosition + sizeof(wav_hdr) - 44;
 }
