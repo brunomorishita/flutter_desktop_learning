@@ -28,6 +28,6 @@ This first version saves a raw audio with:
 
 I'm testing the resulting audio with Audacity, importing raw data
 
-## What have changed?
+### What have changed?
  - I'm using ffigen + SDL2 to do the recording part.
  I found that SDL2 is more suitable for what I've been trying to achieve
