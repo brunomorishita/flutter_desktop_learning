@@ -23,7 +23,7 @@ class RecordPage extends StatelessWidget {
     return Observer(
         builder: (_) => Column(
         children: _recordPageStore.items
-        )
+        ).padding(vertical: 20)
     );
   }
 
@@ -50,17 +50,20 @@ class RecordPage extends StatelessWidget {
     var microphoneIcon =
     sound ? FontAwesomeIcons.microphoneAlt : FontAwesomeIcons.microphoneAltSlash;
 
-    return IconButton(
-      icon: FaIcon(microphoneIcon, size: 40),
-      onPressed: () async {
-        print("Pressed");
+    void handleTap() {
+      print("handleTap --");
         switch (_recordPageStore.recordingState) {
-          case RecordingState.Idle: _startRecording(); break;
-          case RecordingState.Start: _stopRecording(); break;
+            case RecordingState.Idle: _startRecording(); break;
+            case RecordingState.Start: _stopRecording(); break;
         }
-      },
-    ).padding(all: 10)
-    .decorated(color: Color(0xff7AC1E7), shape: BoxShape.circle);
+    }
+
+    return FaIcon(microphoneIcon, size: 40, color: Colors.white,)
+        .alignment(Alignment.center)
+        .backgroundColor(Color(0xff80D8FF))
+        .constrained(width: 100, height: 100)
+        .clipOval()
+        .gestures(onTap: handleTap);
   }
 
   void _startRecording() {
