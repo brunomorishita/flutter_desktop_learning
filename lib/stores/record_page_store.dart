@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mobx/mobx.dart';
-part 'record_page_store.g.dart';
 
-enum RecordingState { Idle, Start }
+import '../model/recording_state.dart';
+part 'record_page_store.g.dart';
 
 class RecordPageStore = _RecordPageStore with _$RecordPageStore;
 

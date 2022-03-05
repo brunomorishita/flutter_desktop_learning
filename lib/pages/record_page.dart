@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import '../model/recording_state.dart';
 import 'native_audio_recording.dart' as nar;
 import 'package:flutter_trial/stores/record_page_store.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
