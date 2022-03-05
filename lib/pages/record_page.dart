@@ -59,11 +59,8 @@ class RecordPage extends StatelessWidget {
           case RecordingState.Start: _stopRecording(); break;
         }
       },
-    ).card(
-      elevation: 50,
-      color: Colors.transparent,
-      shape: const CircleBorder(side: BorderSide.none ),
-    );
+    ).padding(all: 10)
+    .decorated(color: Color(0xff7AC1E7), shape: BoxShape.circle);
   }
 
   void _startRecording() {
