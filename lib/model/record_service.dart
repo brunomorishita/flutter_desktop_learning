@@ -22,32 +22,49 @@ String _getPath() {
 
 class RecordService {
   late String appDocPath;
-  final nativeAudioRecording = nar.NativeAudioRecording(DynamicLibrary.open(_getPath()));
-  String audioFileName = "record";
-  String audioFileExtension = ".raw";
-  int audioIndex = 0;
+  late String _audioFilePath;
 
-  RecordService() {
+  List<String> _savedAudioFiles = <String>[];
+
+  final _nativeAudioRecording = nar.NativeAudioRecording(DynamicLibrary.open(_getPath()));
+  String _audioFileName = "record";
+  String _audioFileExtension = ".raw";
+  int _audioIndex = 0;
+
+  static final RecordService _instance = RecordService.internal();
+
+  RecordService.internal() {
     _initializer();
+  }
+
+  factory RecordService() {
+    return _instance;
   }
 
   void _initializer() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     appDocPath = appDocDir.path;
+    _audioFilePath = appDocPath + "\\" + _audioFileName + "-" +
+        _audioIndex.toString() + _audioFileExtension;
+  }
+
+  List<String> get savedAudioFiles {
+    return _savedAudioFiles;
   }
 
   void start() {
-    String audioFilePath = appDocPath + "\\" + audioFileName +
-        audioIndex.toString() + audioFileExtension;
-    print("Start --> Path : ${audioFilePath}");
-    Pointer<Int8> audioFilePathC = audioFilePath.toNativeUtf8().cast();
-    nativeAudioRecording.init(audioFilePathC);
-    nativeAudioRecording.start();
+    _audioFilePath = appDocPath + "\\" + _audioFileName + "-" +
+        _audioIndex.toString() + _audioFileExtension;
+    print("Start --> Path : ${_audioFilePath}");
+    Pointer<Int8> audioFilePathC = _audioFilePath.toNativeUtf8().cast();
+    _nativeAudioRecording.init(audioFilePathC);
+    _nativeAudioRecording.start();
   }
 
   void stop() {
     print("Stop --");
-    nativeAudioRecording.stop();
-    ++audioIndex;
+    _nativeAudioRecording.stop();
+    ++_audioIndex;
+    _savedAudioFiles.add(_audioFilePath);
   }
 }
