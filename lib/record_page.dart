@@ -8,7 +8,7 @@ import 'package:styled_widget/styled_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'native_audio_recording.dart' as nar;
-import 'package:flutter_trial/record_page_store.dart';
+import 'package:flutter_trial/stores/record_page_store.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 String _getPath() {

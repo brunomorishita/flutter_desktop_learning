@@ -4,7 +4,7 @@ import 'package:flutter_trial/record_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'audio_file_page.dart';
-import 'home_page_store.dart';
+import 'stores/home_page_store.dart';
 
 class HomePage extends StatelessWidget {
   final HomePageStore _homePageStore = HomePageStore();
