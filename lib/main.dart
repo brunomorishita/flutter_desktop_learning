@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:system_theme/system_theme.dart';
-import 'home_page.dart';
+import 'pages/home_page.dart';
 
 void main() {
   runApp(MyApp());

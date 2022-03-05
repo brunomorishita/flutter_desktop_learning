@@ -30,7 +30,7 @@ dev_dependencies:
   ffigen: 4.1.3
 
 ffigen:
-  output: 'lib/native_audio_recording.dart'
+  output: 'lib/pages/native_audio_recording.dart'
   name: 'NativeAudioRecording'
   description: 'Native Audio Recording using SDL'
   headers:
