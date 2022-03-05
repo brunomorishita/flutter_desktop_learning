@@ -35,11 +35,11 @@ class HomePage extends StatelessWidget {
   List<NavigationPaneItem> _getPanelItems(BuildContext context) {
     return <NavigationPaneItem>[
       PaneItem(
-        icon: FaIcon(FontAwesomeIcons.microphone),
+        icon: FaIcon(FluentIcons.microphone),
         title: Text(AppLocalizations.of(context)!.panelItemRecord),
       ),
       PaneItem(
-        icon: FaIcon(FontAwesomeIcons.folder),
+        icon: FaIcon(FluentIcons.fabric_open_folder_horizontal),
         title: Text(AppLocalizations.of(context)!.panelItemFiles),
       ),
     ];

@@ -16,6 +16,9 @@ abstract class _RecordPageStore with Store {
   @observable
   ObservableList<Widget> items = <Widget>[].asObservable();
 
+  @observable
+  Color recordLightColor = Colors.red;
+
   @action
   setRecordingState(RecordingState value) {
     recordingState = value;
@@ -35,5 +38,10 @@ abstract class _RecordPageStore with Store {
   @action
   removeLast() {
     items.removeLast();
+  }
+
+  @action
+  setRecordLightColor(Color value) {
+    recordLightColor = value;
   }
 }
