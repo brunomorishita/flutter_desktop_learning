@@ -77,7 +77,7 @@ class RecordPage extends StatelessWidget {
     sound ? FontAwesomeIcons.microphoneAlt : FontAwesomeIcons.microphoneAltSlash;
 
     return IconButton(
-      icon: FaIcon(microphoneIcon),
+      icon: FaIcon(microphoneIcon, size: 40),
       onPressed: () async {
         print("Pressed");
         switch (recordingState) {
@@ -103,10 +103,9 @@ class RecordPage extends StatelessWidget {
         }
       },
     ).card(
-      elevation: 10,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      elevation: 50,
+      color: Colors.transparent,
+      shape: const CircleBorder(side: BorderSide.none ),
     );
   }
 
