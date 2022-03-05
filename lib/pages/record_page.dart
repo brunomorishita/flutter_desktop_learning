@@ -1,45 +1,19 @@
-import 'dart:ffi';
-import 'dart:io';
-import 'package:ffi/src/utf8.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/foundation.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:styled_widget/styled_widget.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
 import '../model/recording_state.dart';
-import 'native_audio_recording.dart' as nar;
+
 import 'package:flutter_trial/stores/record_page_store.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-String _getPath() {
-  final openalSoftWrapperPath = Directory.current.absolute.path;
-  var path = p.join(openalSoftWrapperPath, 'build\\windows\\native_lib');
-
-  String mode = kDebugMode ? 'Debug' : 'Release';
-  path = p.join(path, mode, 'sdl-wrapper.dll');
-
-  print('path: $path');
-  return path;
-}
-
 class RecordPage extends StatelessWidget {
   final _recordPageStore = RecordPageStore();
-
-  late String appDocPath;
-  String audioFileName = "record";
-  String audioFileExtension = ".raw";
-  int audioIndex = 0;
-
-  final nativeAudioRecording = nar.NativeAudioRecording(DynamicLibrary.open(_getPath()));
 
   RecordPage() {
     initializer();
   }
 
   void initializer() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    appDocPath = appDocDir.path;
     _recordPageStore.addItem(_buildMicButton());
   }
 
@@ -95,21 +69,13 @@ class RecordPage extends StatelessWidget {
   }
 
   void _startRecording() {
-    String audioFilePath = appDocPath + "\\" + audioFileName +
-        audioIndex.toString() + audioFileExtension;
-    print("Start --> Path : ${audioFilePath}");
     _recordPageStore.setRecordingState(RecordingState.Start);
     _recordPageStore.addItem(_buildTimerAnimation());
-    Pointer<Int8> audioFilePathC = audioFilePath.toNativeUtf8().cast();
-    nativeAudioRecording.init(audioFilePathC);
-    nativeAudioRecording.start();
   }
 
   void _stopRecording() {
-    print("Stop --");
-    _recordPageStore.setRecordingState( RecordingState.Idle);
+    _recordPageStore.setRecordingState( RecordingState.Stop);
     _recordPageStore.removeLast();
-    nativeAudioRecording.stop();
-    ++audioIndex;
+    _recordPageStore.setRecordingState(RecordingState.Idle);
   }
 }

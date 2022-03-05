@@ -1,1 +1,1 @@
-enum RecordingState { Idle, Start }
+enum RecordingState { Idle, Start, Stop }

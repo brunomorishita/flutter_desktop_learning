@@ -1,12 +1,15 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:mobx/mobx.dart';
 
+import '../model/record_service.dart';
 import '../model/recording_state.dart';
 part 'record_page_store.g.dart';
 
 class RecordPageStore = _RecordPageStore with _$RecordPageStore;
 
 abstract class _RecordPageStore with Store {
+  final RecordService _recordService = RecordService();
+
   @observable
   RecordingState recordingState = RecordingState.Idle;
 
@@ -16,6 +19,12 @@ abstract class _RecordPageStore with Store {
   @action
   setRecordingState(RecordingState value) {
     recordingState = value;
+
+    switch(recordingState) {
+      case RecordingState.Idle: break;
+      case RecordingState.Start : _recordService.start(); break;
+      case RecordingState.Stop : _recordService.stop(); break;
+    }
   }
 
   @action
