@@ -39,19 +39,15 @@ class RecordPage extends StatelessWidget {
   void initializer() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     appDocPath = appDocDir.path;
+    _recordPageStore.addItem(_buildMicButton());
   }
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    List<Widget> items = [ _buildMicButton() ];
-    if (_recordPageStore.recordingState == RecordingState.Start) {
-      items.add(_buildTimerAnimation());
-    }
-
     return Observer(
         builder: (_) => Column(
-        children: items
+        children: _recordPageStore.items
         )
     );
   }
@@ -102,6 +98,7 @@ class RecordPage extends StatelessWidget {
         audioIndex.toString() + audioFileExtension;
     print("Start --> Path : ${audioFilePath}");
     _recordPageStore.setRecordingState(RecordingState.Start);
+    _recordPageStore.addItem(_buildTimerAnimation());
     Pointer<Int8> audioFilePathC = audioFilePath.toNativeUtf8().cast();
     nativeAudioRecording.init(audioFilePathC);
     nativeAudioRecording.start();
@@ -110,8 +107,8 @@ class RecordPage extends StatelessWidget {
   void _stopRecording() {
     print("Stop --");
     _recordPageStore.setRecordingState( RecordingState.Idle);
+    _recordPageStore.removeLast();
     nativeAudioRecording.stop();
     ++audioIndex;
   }
-
 }
