@@ -15,7 +15,8 @@ class HomePage extends StatelessWidget {
     return Observer(
         builder: (_) => NavigationView(
               appBar: NavigationAppBar(
-                title: Text(AppLocalizations.of(context)!.appBarTitle),
+                title: Text(AppLocalizations.of(context)!.appBarTitle,
+                    style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)),
                 automaticallyImplyLeading: false,
               ),
               pane: NavigationPane(

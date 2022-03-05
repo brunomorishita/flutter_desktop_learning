@@ -19,7 +19,17 @@ class MyApp extends StatelessWidget {
           AppLocalizations.delegate,
         ],
         supportedLocales: AppLocalizations.supportedLocales,
-        theme: ThemeData(accentColor: SystemTheme.accentInstance.accent.toAccentColor()),
+        theme: ThemeData(
+          accentColor: SystemTheme.accentInstance.accent.toAccentColor(),
+          typography: const Typography(
+            caption: TextStyle(
+              fontFamily: 'Segoe UI',
+              fontSize: 14,
+              color: Colors.black,
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
         home: HomePage());
   }
 }
