@@ -40,7 +40,12 @@ class AudioFilePage extends StatelessWidget {
             trailing = (stat.size / pow(10, exponent)).toStringAsFixed(2) + unit;
 
             return ListTile(
-              leading: Icon(FluentIcons.music_note),
+              leading: Button(
+                child: Icon(FluentIcons.play),
+                onPressed: () {
+
+                },
+              ),
               title: Text(title),
               subtitle: Text(details!),
               trailing: Text(trailing),
