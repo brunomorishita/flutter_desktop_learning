@@ -8,8 +8,8 @@ import 'package:styled_widget/styled_widget.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'native_audio_recording.dart' as nar;
-
-enum RecordingState { Idle, Start }
+import 'package:flutter_trial/record_page_store.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 String _getPath() {
   final openalSoftWrapperPath = Directory.current.absolute.path;
@@ -23,7 +23,8 @@ String _getPath() {
 }
 
 class RecordPage extends StatelessWidget {
-  RecordingState recordingState = RecordingState.Idle;
+  final _recordPageStore = RecordPageStore();
+
   late String appDocPath;
   String audioFileName = "record";
   String audioFileExtension = ".raw";
@@ -43,11 +44,15 @@ class RecordPage extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildMicButton(),
-        _buildTimerAnimation(),
-      ],
+    List<Widget> items = [ _buildMicButton() ];
+    if (_recordPageStore.recordingState == RecordingState.Start) {
+      items.add(_buildTimerAnimation());
+    }
+
+    return Observer(
+        builder: (_) => Column(
+        children: items
+        )
     );
   }
 
@@ -80,26 +85,9 @@ class RecordPage extends StatelessWidget {
       icon: FaIcon(microphoneIcon, size: 40),
       onPressed: () async {
         print("Pressed");
-        switch (recordingState) {
-          case RecordingState.Idle:
-            {
-              String audioFilePath = appDocPath + "\\" + audioFileName +
-                  audioIndex.toString() + audioFileExtension;
-              print("Start --> Path : ${audioFilePath}");
-              recordingState = RecordingState.Start;
-              Pointer<Int8> audioFilePathC = audioFilePath.toNativeUtf8().cast();
-              nativeAudioRecording.init(audioFilePathC);
-              nativeAudioRecording.start();
-              break;
-            }
-          case RecordingState.Start:
-            {
-              print("Stop --");
-              recordingState = RecordingState.Idle;
-              nativeAudioRecording.stop();
-              ++audioIndex;
-              break;
-            }
+        switch (_recordPageStore.recordingState) {
+          case RecordingState.Idle: _startRecording(); break;
+          case RecordingState.Start: _stopRecording(); break;
         }
       },
     ).card(
@@ -107,6 +95,23 @@ class RecordPage extends StatelessWidget {
       color: Colors.transparent,
       shape: const CircleBorder(side: BorderSide.none ),
     );
+  }
+
+  void _startRecording() {
+    String audioFilePath = appDocPath + "\\" + audioFileName +
+        audioIndex.toString() + audioFileExtension;
+    print("Start --> Path : ${audioFilePath}");
+    _recordPageStore.setRecordingState(RecordingState.Start);
+    Pointer<Int8> audioFilePathC = audioFilePath.toNativeUtf8().cast();
+    nativeAudioRecording.init(audioFilePathC);
+    nativeAudioRecording.start();
+  }
+
+  void _stopRecording() {
+    print("Stop --");
+    _recordPageStore.setRecordingState( RecordingState.Idle);
+    nativeAudioRecording.stop();
+    ++audioIndex;
   }
 
 }
