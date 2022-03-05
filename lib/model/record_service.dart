@@ -28,7 +28,7 @@ class RecordService {
 
   final _nativeAudioRecording = nar.NativeAudioRecording(DynamicLibrary.open(_getPath()));
   String _audioFileName = "record";
-  String _audioFileExtension = ".raw";
+  String _audioFileExtension = ".wav";
   int _audioIndex = 0;
 
   static final RecordService _instance = RecordService.internal();
