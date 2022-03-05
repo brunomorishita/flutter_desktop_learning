@@ -30,6 +30,8 @@ public:
 private:
   void createWavFile(const std::string& fileName);
 
+  void writeWavHeader(std::ofstream& file, int writtenBytes);
+
   void consumeAudio();
 
   AudioConfig m_audioConfig;

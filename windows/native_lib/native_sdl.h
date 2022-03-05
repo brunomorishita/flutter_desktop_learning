@@ -7,11 +7,17 @@ extern "C" {
 
 #define NATIVE_SDL_PUBLIC(type) __declspec(dllexport) type __stdcall
 
-NATIVE_SDL_PUBLIC(void) init(char* wavFile);
+NATIVE_SDL_PUBLIC(void) record_init(char* wavFile);
 
-NATIVE_SDL_PUBLIC(void) start();
+NATIVE_SDL_PUBLIC(void) record_start();
 
-NATIVE_SDL_PUBLIC(void) stop();
+NATIVE_SDL_PUBLIC(void) record_stop();
+
+NATIVE_SDL_PUBLIC(void) play_init(char* wavFile);
+
+NATIVE_SDL_PUBLIC(void) play_start();
+
+NATIVE_SDL_PUBLIC(void) play_stop();
 
 #ifdef __cplusplus
 }
