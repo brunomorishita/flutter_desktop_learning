@@ -29,17 +29,15 @@ class RecordPage extends StatelessWidget {
 
   Widget _buildTimerAnimation() {
     return TweenAnimationBuilder<Duration>(
-        duration: const Duration(seconds: 400),
-        tween: Tween(begin: const Duration(seconds: 0), end:const Duration(seconds: 400)),
+        duration: const Duration(days: 3),
+        tween: Tween(begin: const Duration(seconds: 0), end:const Duration(days: 3)),
         onEnd: () {
           print('Timer ended');
         },
         builder: (BuildContext context, Duration value, Widget? child) {
-          final minutes = value.inMinutes;
-          final seconds = value.inSeconds % 60;
           return Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),
-              child: Text('$minutes:$seconds',
+              child: Text(_printDuration(value),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       color: Colors.black,
@@ -77,5 +75,38 @@ class RecordPage extends StatelessWidget {
     _recordPageStore.setRecordingState( RecordingState.Stop);
     _recordPageStore.removeLast();
     _recordPageStore.setRecordingState(RecordingState.Idle);
+  }
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String ret = "";
+
+    int hour = duration.inHours.remainder(24);
+    int minute = duration.inMinutes.remainder(60);
+    int second = duration.inSeconds.remainder(60);
+    int milissecond = duration.inMilliseconds.remainder(1000);
+
+    String twoDigitHours = twoDigits(hour);
+    String twoDigitMinutes = twoDigits(minute);
+    String twoDigitSeconds = twoDigits(second);
+    String twoDigitMilliseconds = twoDigits(milissecond);
+
+    if (hour > 0) {
+      ret += twoDigitHours + ":";
+    }
+
+    if (minute > 0) {
+      ret += twoDigitMinutes + ":";
+    }
+
+    if (second > 0) {
+      ret += twoDigitSeconds + ".";
+    }
+
+    if (milissecond > 0) {
+      ret += twoDigitMilliseconds;
+    }
+
+    return ret;
   }
 }
