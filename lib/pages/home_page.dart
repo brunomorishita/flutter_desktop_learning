@@ -33,12 +33,12 @@ class HomePage extends StatelessWidget {
   List<NavigationPaneItem> _getPanelItems() {
     return <NavigationPaneItem>[
       PaneItem(
-        icon: FaIcon(FontAwesomeIcons.home),
-        title: const Text('Home'),
+        icon: FaIcon(FontAwesomeIcons.microphone),
+        title: const Text('Record'),
       ),
       PaneItem(
-        icon: FaIcon(FontAwesomeIcons.solidFileAudio),
-        title: const Text('Files'),
+        icon: FaIcon(FontAwesomeIcons.folder),
+        title: const Text('Saved Files'),
       ),
     ];
   }
