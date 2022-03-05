@@ -19,25 +19,7 @@ class AudioFilePage extends StatelessWidget {
             final title = _soundService.savedAudioFiles.elementAt(index);
             final stat = FileStat.statSync(title);
             final details = stat.changed.toString();
-            String trailing = stat.size.toString();
-
-            int exponent;
-            String unit;
-            if (stat.size / pow(10, 9) > 1) {
-              exponent = 9;
-              unit = 'G';
-            } else if (stat.size / pow(10, 6) > 1) {
-              exponent = 6;
-              unit = 'M';
-            } else if (stat.size / pow(10, 3) > 1) {
-              exponent = 3;
-              unit = 'K';
-            } else {
-              exponent = 0;
-              unit = '';
-            }
-
-            trailing = (stat.size / pow(10, exponent)).toStringAsFixed(2) + unit;
+            String trailing = _getSizeFormatted(title);
 
             return ListTile(
               leading: Button(
@@ -54,5 +36,30 @@ class AudioFilePage extends StatelessWidget {
       ),
     );
   }
+
+  String _getSizeFormatted(String value) {
+    final stat = FileStat.statSync(value);
+    String ret = stat.size.toString();
+
+    int exponent;
+    String unit;
+    if (stat.size / pow(10, 9) > 1) {
+      exponent = 9;
+      unit = 'G';
+    } else if (stat.size / pow(10, 6) > 1) {
+      exponent = 6;
+      unit = 'M';
+    } else if (stat.size / pow(10, 3) > 1) {
+      exponent = 3;
+      unit = 'K';
+    } else {
+      exponent = 0;
+      unit = '';
+    }
+
+    ret = (stat.size / pow(10, exponent)).toStringAsFixed(2) + unit;
+    return ret;
+  }
+
 
 }
