@@ -43,9 +43,33 @@ class RecordPage extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: _buildMicButton(),
+    return Column(
+      children: [
+        _buildMicButton(),
+        _buildTimerAnimation(),
+      ],
     );
+  }
+
+  Widget _buildTimerAnimation() {
+    return TweenAnimationBuilder<Duration>(
+        duration: const Duration(seconds: 400),
+        tween: Tween(begin: const Duration(seconds: 0), end:const Duration(seconds: 400)),
+        onEnd: () {
+          print('Timer ended');
+        },
+        builder: (BuildContext context, Duration value, Widget? child) {
+          final minutes = value.inMinutes;
+          final seconds = value.inSeconds % 60;
+          return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Text('$minutes:$seconds',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30)));
+        });
   }
 
   Widget _buildMicButton({bool sound = true}) {
