@@ -2,11 +2,11 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_trial/model/record_service.dart';
+import 'package:flutter_trial/model/sound_service.dart';
 
 class AudioFilePage extends StatelessWidget {
   final _controller = ScrollController();
-  final RecordService _recordService = RecordService();
+  final SoundService _soundService = SoundService();
 
   // This widget is the root of your application.
   @override
@@ -14,9 +14,9 @@ class AudioFilePage extends StatelessWidget {
     return Scrollbar(
       controller: _controller,
       child: ListView.builder(
-          itemCount: _recordService.savedAudioFiles.length,
+          itemCount: _soundService.savedAudioFiles.length,
           itemBuilder: (context, index) {
-            final title = _recordService.savedAudioFiles.elementAt(index);
+            final title = _soundService.savedAudioFiles.elementAt(index);
             final stat = FileStat.statSync(title);
             final details = stat.changed.toString();
             String trailing = stat.size.toString();
@@ -43,7 +43,7 @@ class AudioFilePage extends StatelessWidget {
               leading: Button(
                 child: Icon(FluentIcons.play),
                 onPressed: () {
-
+                  _soundService.playStart(title);
                 },
               ),
               title: Text(title),

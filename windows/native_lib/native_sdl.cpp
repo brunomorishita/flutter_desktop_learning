@@ -1,5 +1,6 @@
 #include "native_sdl.h"
 #include "AudioRecordingManager.h"
+#include "AudioPlayManager.h"
 
 #include <iostream>
 #include <memory>
@@ -13,22 +14,36 @@
 #endif
 
 static std::unique_ptr<AudioRecordingManager> audioRecordingManager = nullptr;
+static std::unique_ptr<AudioPlayManager> audioPlayManager = nullptr;
 
 // Avoiding name mangling
 extern "C" {
-void init(char* wavFile) {
+void record_init(char* wavFile) {
     AudioRecordingManager::AudioConfig audioConfig;
     audioRecordingManager = std::make_unique<AudioRecordingManager>(audioConfig);
 
     audioRecordingManager->init(wavFile);
 }
 
-void start() {
+void record_start() {
     audioRecordingManager->start();
 }
 
-void stop() {
+void record_stop() {
     audioRecordingManager->stop();
+}
+
+void play_init(char* wavFile) {
+    audioPlayManager = std::make_unique<AudioPlayManager>();
+    audioPlayManager->init(wavFile);
+}
+
+void play_start() {
+    audioPlayManager->start();
+}
+
+void play_stop() {
+    audioPlayManager->stop();
 }
 
 }  // extern "C"

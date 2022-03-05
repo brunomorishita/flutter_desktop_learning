@@ -28,6 +28,7 @@ set(NATIVE_LIB_NAME sdl-wrapper)
 add_library(${NATIVE_LIB_NAME} SHARED
   "native_sdl.cpp"
   "AudioRecordingManager.cpp"
+  "AudioPlayManager.cpp"
 )
 
 set(ENV{SDL2DIR} "${sdl_SOURCE_DIR}")
@@ -41,3 +42,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_executable("record" "example/record.cpp"
                         "AudioRecordingManager.cpp")
 target_link_libraries("record" PRIVATE ${SDL2_LIBRARIES})
+
+add_executable("play_wav" "example/play_wav.cpp"
+                          "AudioPlayManager.cpp")
+target_link_libraries("play_wav" PRIVATE ${SDL2_LIBRARIES})

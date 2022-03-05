@@ -20,7 +20,7 @@ String _getPath() {
   return path;
 }
 
-class RecordService {
+class SoundService {
   late String appDocPath;
   late String _audioFilePath;
 
@@ -31,13 +31,13 @@ class RecordService {
   String _audioFileExtension = ".wav";
   int _audioIndex = 0;
 
-  static final RecordService _instance = RecordService.internal();
+  static final SoundService _instance = SoundService.internal();
 
-  RecordService.internal() {
+  SoundService.internal() {
     _initializer();
   }
 
-  factory RecordService() {
+  factory SoundService() {
     return _instance;
   }
 
@@ -52,19 +52,31 @@ class RecordService {
     return _savedAudioFiles;
   }
 
-  void start() {
+  void recordStart() {
     _audioFilePath = appDocPath + "\\" + _audioFileName + "-" +
         _audioIndex.toString() + _audioFileExtension;
     print("Start --> Path : ${_audioFilePath}");
     Pointer<Int8> audioFilePathC = _audioFilePath.toNativeUtf8().cast();
-    _nativeAudioRecording.init(audioFilePathC);
-    _nativeAudioRecording.start();
+    _nativeAudioRecording.record_init(audioFilePathC);
+    _nativeAudioRecording.record_start();
   }
 
-  void stop() {
+  void recordStop() {
     print("Stop --");
-    _nativeAudioRecording.stop();
+    _nativeAudioRecording.record_stop();
     ++_audioIndex;
     _savedAudioFiles.add(_audioFilePath);
+  }
+
+  void playStart(String audioFile) {
+    print("Play Start --> ${audioFile}");
+    Pointer<Int8> audioFilePathC = audioFile.toNativeUtf8().cast();
+    _nativeAudioRecording.play_init(audioFilePathC);
+    _nativeAudioRecording.play_start();
+  }
+
+  void playStop() {
+    print("Play Stop --");
+    _nativeAudioRecording.play_stop();
   }
 }

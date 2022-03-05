@@ -19,33 +19,63 @@ class NativeAudioRecording {
           lookup)
       : _lookup = lookup;
 
-  void init(
+  void record_init(
     ffi.Pointer<ffi.Int8> wavFile,
   ) {
-    return _init(
+    return _record_init(
       wavFile,
     );
   }
 
-  late final _initPtr =
+  late final _record_initPtr =
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Int8>)>>(
-          'init');
-  late final _init =
-      _initPtr.asFunction<void Function(ffi.Pointer<ffi.Int8>)>();
+          'record_init');
+  late final _record_init =
+      _record_initPtr.asFunction<void Function(ffi.Pointer<ffi.Int8>)>();
 
-  void start() {
-    return _start();
+  void record_start() {
+    return _record_start();
   }
 
-  late final _startPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>('start');
-  late final _start = _startPtr.asFunction<void Function()>();
+  late final _record_startPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>('record_start');
+  late final _record_start = _record_startPtr.asFunction<void Function()>();
 
-  void stop() {
-    return _stop();
+  void record_stop() {
+    return _record_stop();
   }
 
-  late final _stopPtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function()>>('stop');
-  late final _stop = _stopPtr.asFunction<void Function()>();
+  late final _record_stopPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>('record_stop');
+  late final _record_stop = _record_stopPtr.asFunction<void Function()>();
+
+  void play_init(
+    ffi.Pointer<ffi.Int8> wavFile,
+  ) {
+    return _play_init(
+      wavFile,
+    );
+  }
+
+  late final _play_initPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Int8>)>>(
+          'play_init');
+  late final _play_init =
+      _play_initPtr.asFunction<void Function(ffi.Pointer<ffi.Int8>)>();
+
+  void play_start() {
+    return _play_start();
+  }
+
+  late final _play_startPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>('play_start');
+  late final _play_start = _play_startPtr.asFunction<void Function()>();
+
+  void play_stop() {
+    return _play_stop();
+  }
+
+  late final _play_stopPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>('play_stop');
+  late final _play_stop = _play_stopPtr.asFunction<void Function()>();
 }
