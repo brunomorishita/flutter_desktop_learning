@@ -17,15 +17,13 @@ class _BlinkWidgetState extends State<BlinkWidget> with SingleTickerProviderStat
   initState() {
     super.initState();
 
-    _controller = new AnimationController(
-        duration: Duration(milliseconds: widget.interval),
-        vsync: this
-    );
+    _controller =
+        new AnimationController(duration: Duration(milliseconds: widget.interval), vsync: this);
 
     _controller.addStatusListener((status) {
-      if(status == AnimationStatus.completed) {
+      if (status == AnimationStatus.completed) {
         setState(() {
-          if(++_currentWidget == widget.children.length) {
+          if (++_currentWidget == widget.children.length) {
             _currentWidget = 0;
           }
         });

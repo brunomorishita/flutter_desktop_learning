@@ -13,17 +13,14 @@ class AudioFilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scrollbar(
-      controller: _controller,
-      child: ListView.builder(
-        itemCount: _soundService.savedAudioFiles.length,
-        itemBuilder: _buildItem
-    ).card(
-          elevation: 10,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          )
-      )
-    );
+        controller: _controller,
+        child: ListView.builder(
+                itemCount: _soundService.savedAudioFiles.length, itemBuilder: _buildItem)
+            .card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                )));
   }
 
   Widget _buildItem(BuildContext context, int index) {
@@ -33,7 +30,8 @@ class AudioFilePage extends StatelessWidget {
     final details = stat.changed.toString();
     String trailing = _getSizeFormatted(completePath);
 
-    final Widget titleWidget = Text(title,
+    final Widget titleWidget = Text(
+      title,
       style: TextStyle(
         fontWeight: FontWeight.bold,
       ),
@@ -44,7 +42,7 @@ class AudioFilePage extends StatelessWidget {
         child: Icon(FluentIcons.play),
         onPressed: () {
           _soundService.playStart(completePath);
-          },
+        },
       ),
       title: titleWidget,
       subtitle: Text(details!),
