@@ -15,29 +15,34 @@ class RecordPage extends StatelessWidget {
   late Timer _timer;
   final _animationDuration = Duration(seconds: 1);
 
-  RecordPage() {
-    initializer();
-  }
-
-  void initializer() async {
-    _recordPageStore.addItem(_buildRecSignal());
-    _recordPageStore.addItem(_buildMicButton());
-  }
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    Widget getItems(_) {
+      print("recording screen");
+      List<Widget> items = <Widget>[
+        _buildRecSignal(),
+        _buildMicButton()
+      ];
+
+      if (_recordPageStore.recordingState == RecordingState.Start) {
+        items.add(_buildTimerAnimation());
+      }
+
+      return Column(
+          children: items
+      )
+          .padding(vertical: 20)
+          .card(
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          )
+      );
+    }
+
     return Observer(
-        builder: (_) => Column(
-        children: _recordPageStore.items
-        )
-            .padding(vertical: 20)
-            .card(
-            elevation: 10,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            )
-        )
+        builder: getItems
     );
   }
 
@@ -108,12 +113,10 @@ class RecordPage extends StatelessWidget {
 
   void _startRecording() {
     _recordPageStore.setRecordingState(RecordingState.Start);
-    _recordPageStore.addItem(_buildTimerAnimation());
   }
 
   void _stopRecording() {
     _recordPageStore.setRecordingState( RecordingState.Stop);
-    _recordPageStore.removeLast();
     _recordPageStore.setRecordingState(RecordingState.Idle);
   }
 

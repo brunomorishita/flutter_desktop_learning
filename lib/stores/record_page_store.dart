@@ -14,9 +14,6 @@ abstract class _RecordPageStore with Store {
   RecordingState recordingState = RecordingState.Idle;
 
   @observable
-  ObservableList<Widget> items = <Widget>[].asObservable();
-
-  @observable
   Color recordLightColor = Colors.red;
 
   @action
@@ -28,16 +25,6 @@ abstract class _RecordPageStore with Store {
       case RecordingState.Start : _soundService.recordStart(); break;
       case RecordingState.Stop : _soundService.recordStop(); break;
     }
-  }
-
-  @action
-  addItem(Widget item) {
-    items.add(item);
-  }
-
-  @action
-  removeLast() {
-    items.removeLast();
   }
 
   @action
