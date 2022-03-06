@@ -19,7 +19,6 @@ class RecordPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget getItems(_) {
-      print("recording screen");
       List<Widget> items = <Widget>[
         _buildRecSignal(),
         _buildMicButton()

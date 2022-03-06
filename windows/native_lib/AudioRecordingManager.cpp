@@ -128,8 +128,6 @@ void AudioRecordingManager::stop() {
 }
 
 void AudioRecordingManager::processReceivedSpec(Uint8* stream, int len ) {
-    std::cout << "==> AudioRecordingManager::processReceivedSpec ==, len = "<< len << std::endl;
-
     //Copy audio from stream
 	std::memcpy(&m_buffer[ m_bufferWritePosition ], stream, len);
 
@@ -179,13 +177,11 @@ void AudioRecordingManager::consumeAudio() {
         std::unique_lock<std::mutex> lock(m_mutex);
         while (m_bufferWritePosition == m_bufferReadPosition && !m_finished )
         {
-            std::cout << "==> waiting " << std::endl;
             m_cv.wait(lock, [&](){ return (m_bufferWritePosition > m_bufferReadPosition) || m_finished; });
         }
 
         int len =  m_bufferWritePosition - m_bufferReadPosition;
 
-        std::cout << "==> writing " << sizeof(Uint8) * len << " bytes into wav file" << std::endl;
         char *buffer_raw = (char *) &m_buffer[ m_bufferReadPosition ];
         m_wavFile.write(buffer_raw, sizeof(Uint8) * len);
         writtenBytes += len;
