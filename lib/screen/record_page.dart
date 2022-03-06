@@ -8,6 +8,8 @@ import '../model/recording_state.dart';
 import 'package:flutter_trial/stores/record_page_store.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../utils.dart' as utils;
+
 class RecordPage extends StatelessWidget {
   final _recordPageStore = RecordPageStore();
 
@@ -73,7 +75,7 @@ class RecordPage extends StatelessWidget {
         builder: (BuildContext context, Duration value, Widget? child) {
           return Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),
-              child: Text(_printDuration(value),
+              child: Text(utils.printDuration(value),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                       color: Colors.black,
@@ -116,38 +118,5 @@ class RecordPage extends StatelessWidget {
   void _stopRecording() {
     _recordPageStore.setRecordingState( RecordingState.Stop);
     _recordPageStore.setRecordingState(RecordingState.Idle);
-  }
-
-  String _printDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String ret = "";
-
-    int hour = duration.inHours.remainder(24);
-    int minute = duration.inMinutes.remainder(60);
-    int second = duration.inSeconds.remainder(60);
-    int milissecond = duration.inMilliseconds.remainder(1000);
-
-    String twoDigitHours = twoDigits(hour);
-    String twoDigitMinutes = twoDigits(minute);
-    String twoDigitSeconds = twoDigits(second);
-    String twoDigitMilliseconds = twoDigits(milissecond);
-
-    if (hour > 0) {
-      ret += twoDigitHours + ":";
-    }
-
-    if (minute > 0) {
-      ret += twoDigitMinutes + ":";
-    }
-
-    if (second > 0) {
-      ret += twoDigitSeconds + ".";
-    }
-
-    if (milissecond > 0) {
-      ret += twoDigitMilliseconds;
-    }
-
-    return ret;
   }
 }
