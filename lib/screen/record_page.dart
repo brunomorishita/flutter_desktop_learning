@@ -1,20 +1,18 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_trial/screen/widget/blinking_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:styled_widget/styled_widget.dart';
-import '../model/recording_state.dart';
 
 import 'package:flutter_trial/stores/record_page_store.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../model/recording_state.dart';
 import '../utils.dart' as utils;
 
 class RecordPage extends StatelessWidget {
   final _recordPageStore = RecordPageStore();
-
-  late Timer _timer;
-  final _animationDuration = Duration(seconds: 1);
 
   // This widget is the root of your application.
   @override
@@ -48,7 +46,8 @@ class RecordPage extends StatelessWidget {
 
   Widget _buildRecSignal() {
     return <Widget>[
-      _buildRedLightAnimation(),
+      _buildRedLightAnimation(_recordPageStore.blink),
+      SizedBox(width: 5, height: 5),
       Text("REC",
         style: TextStyle(
           fontWeight: FontWeight.bold,
@@ -58,11 +57,23 @@ class RecordPage extends StatelessWidget {
         .padding(vertical: 20);
   }
 
-  Widget _buildRedLightAnimation() {
-    return Styled.widget()
-        .backgroundColor(_recordPageStore.recordLightColor)
+  Widget _buildRedLightAnimation(bool blink) {
+    Widget redCircle = Styled.widget()
+        .backgroundColor(Colors.red)
         .constrained(width: 15, height: 15)
         .clipOval();
+
+    if (!blink)
+      return redCircle;
+
+    return BlinkWidget(
+        children: <Widget>[
+          redCircle,
+          Styled.widget()
+              .backgroundColor(Colors.transparent)
+              .constrained(width: 15, height: 15)
+              .clipOval(),
+    ]);
   }
 
   Widget _buildTimerAnimation() {
@@ -85,21 +96,11 @@ class RecordPage extends StatelessWidget {
   }
 
   Widget _buildMicButton({bool sound = true}) {
-    _timer = Timer.periodic(_animationDuration, (timer) {
-      var _color = _recordPageStore.recordLightColor;
-      _color = (_color == Colors.red) ? Colors.white : Colors.red;
-      _recordPageStore.setRecordLightColor(_color);
-    });
-
     void handleTap() {
       print("handleTap --");
         switch (_recordPageStore.recordingState) {
             case RecordingState.Idle: _startRecording(); break;
-            case RecordingState.Start: {
-              _timer.cancel();
-              _stopRecording();
-              break;
-            }
+            case RecordingState.Start: _stopRecording(); break;
         }
     }
 
@@ -112,10 +113,12 @@ class RecordPage extends StatelessWidget {
   }
 
   void _startRecording() {
+    _recordPageStore.setBlink(true);
     _recordPageStore.setRecordingState(RecordingState.Start);
   }
 
   void _stopRecording() {
+    _recordPageStore.setBlink(false);
     _recordPageStore.setRecordingState( RecordingState.Stop);
     _recordPageStore.setRecordingState(RecordingState.Idle);
   }

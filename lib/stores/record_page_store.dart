@@ -14,7 +14,7 @@ abstract class _RecordPageStore with Store {
   RecordingState recordingState = RecordingState.Idle;
 
   @observable
-  Color recordLightColor = Colors.red;
+  bool blink = false;
 
   @action
   setRecordingState(RecordingState value) {
@@ -28,7 +28,5 @@ abstract class _RecordPageStore with Store {
   }
 
   @action
-  setRecordLightColor(Color value) {
-    recordLightColor = value;
-  }
+  setBlink(bool value) => blink = value;
 }
