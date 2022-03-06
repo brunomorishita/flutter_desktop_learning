@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:system_theme/system_theme.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'pages/home_page.dart';
+import 'screen/home_page.dart';
 
 void main() {
   runApp(MyApp());

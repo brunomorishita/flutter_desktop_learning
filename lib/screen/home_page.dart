@@ -1,11 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:flutter_trial/pages/record_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'audio_file_page.dart';
 import '../stores/home_page_store.dart';
+import '../screen/record_page.dart';
 
 class HomePage extends StatelessWidget {
   final HomePageStore _homePageStore = HomePageStore();

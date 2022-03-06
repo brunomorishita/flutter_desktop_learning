@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:styled_widget/styled_widget.dart';
 import '../model/recording_state.dart';
